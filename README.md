@@ -20,7 +20,7 @@ Spring Cloud Gateway 기반의 API Gateway 서비스입니다.
 ... 추후 확장 예정
 ## 기술 스택
 
-- Java 17+
+- Java 21+
 - Spring Boot
 - Spring Cloud Gateway
 - Eureka Client

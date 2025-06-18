@@ -1,4 +1,4 @@
-package com.sejong.apigateway;
+package com.sejong.gateway;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

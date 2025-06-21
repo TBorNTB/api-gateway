@@ -35,6 +35,6 @@ spring:
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
 
 
-  jwt:
-    secret: ${JWT_SECRET}
-    expiration: 86400000
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000

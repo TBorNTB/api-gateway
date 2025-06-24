@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,6 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 
 // GatewayFilter - JWT 검증 후 헤더 추가
 @Component
@@ -69,13 +69,13 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                 // 토큰에서 사용자 정보 추출
                 String userId = jwtUtil.getUserIdFromToken(token);
                 String userRole = jwtUtil.getUserRoleFromToken(token);
-                String userEmail = jwtUtil.getUserEmailFromToken(token);
+//                String userEmail = jwtUtil.getUserEmailFromToken(token);
 
                 // 백엔드 서비스로 사용자 정보 전달을 위한 헤더 추가
                 ServerHttpRequest modifiedRequest = request.mutate()
                         .header("X-User-Id", userId)
                         .header("X-User-Role", userRole)
-                        .header("X-User-Email", userEmail)
+//                        .header("X-User-Email", userEmail)
                         .build();
 
                 if (config.isLogEnabled()) {

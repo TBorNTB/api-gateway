@@ -35,15 +35,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
-
-            // 특정 경로는 JWT 검증 제외 (보안 강화)
             String path = request.getURI().getPath();
-            if (isExcludedPath(path, config)) {
-                if (config.isLogEnabled()) {
-                    log.debug("JWT 검증 제외 경로: {}", path);
-                }
-                return chain.filter(exchange);
-            }
 
             // Authorization 헤더에서 토큰 추출
             String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
@@ -92,14 +84,6 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     }
 
     /**
-     * JWT 검증을 제외할 경로인지 확인
-     */
-    private boolean isExcludedPath(String path, Config config) {
-        return config.getExcludedPaths().stream()
-                .anyMatch(excludedPath -> path.matches(excludedPath.replace("*", ".*")));
-    }
-
-    /**
      * 인증 실패 시 응답 처리
      */
     private Mono<Void> handleUnauthorized(ServerWebExchange exchange, String message) {
@@ -126,11 +110,5 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     @Data
     public static class Config {
         private boolean logEnabled = true;
-        private List<String> excludedPaths = Arrays.asList(
-                "/user-service/login",
-                "/user-service/register",
-                "/user-service/health",
-                "/actuator/*"
-        );
     }
 }

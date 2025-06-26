@@ -8,21 +8,34 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka
 
-#????? ??:   /user-service/login
-#Gateway? ??:    /login
-#USER-MICROSERVICE? ??: /login
-
 spring:
   application:
     name: api-gateway
   cloud:
     gateway:
-      routes:
-        - id: user-service
-          uri: lb://USER-MICROSERVICE
-          predicates:
-            - Path=/user-service/**
-          filters:
-            - name: CustomFilter
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/user-service/(?<segment>.*), /${segment}
+      server:
+        webflux:
+          routes:
+            # 인증 불필요 경로
+            - id: user-service-unauthenticated
+              uri: lb://USER-SERVICE # Eureka service ID 확인 필요
+              predicates:
+                - Path=/user-service/login, /user-service/users, /user-service/token/reissue
+                - Method=POST
+              filters:
+                - RewritePath=/user-service/(?<segment>.*), /${segment}
+
+            # 인증 필요 경로
+            - id: user-service-authenticated
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/**
+              filters:
+                - name: JwtAuthenticationFilter # JWT 필터만 추가
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/user-service/(?<segment>.*), /${segment}
+
+
+jwt:
+  secret: apfhdapfhdrnldudnsapxkahddldpdydnglglwkrdmsehffhqustlsgksapxkahd
+  expiration: 86400000

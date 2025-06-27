@@ -7,6 +7,8 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
 
 spring:
   application:
@@ -34,6 +36,14 @@ spring:
                 - name: JwtAuthenticationFilter # JWT 필터만 추가
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
+
+            # newsLetter
+            - id: newsletter-service-unauthenticated
+              uri: lb://NEWSLETTER-SERVICE
+              predicates:
+                - Path=/newsletter-service/**
+              filters:
+                - RewritePath=/newsletter-service/(?<segment>.*), /${segment}
 
 
 jwt:

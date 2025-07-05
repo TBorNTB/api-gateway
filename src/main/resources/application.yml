@@ -15,36 +15,55 @@ spring:
     name: api-gateway
   cloud:
     gateway:
-      server:
-        webflux:
-          routes:
-            # 인증 불필요 경로
-            - id: user-service-unauthenticated
-              uri: lb://USER-SERVICE # Eureka service ID 확인 필요
-              predicates:
-                - Path=/user-service/login, /user-service/users, /user-service/token/reissue
-                - Method=POST
-              filters:
-                - RewritePath=/user-service/(?<segment>.*), /${segment}
+      routes:
+        # === USER SERVICE ===
 
-            # 인증 필요 경로
-            - id: user-service-authenticated
-              uri: lb://USER-SERVICE
-              predicates:
-                - Path=/user-service/**
-              filters:
-                - name: JwtAuthenticationFilter # JWT 필터만 추가
-                - RemoveRequestHeader=Cookie
-                - RewritePath=/user-service/(?<segment>.*), /${segment}
+        # 인증 불필요 경로
+        - id: user-service-unauthenticated
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/login, /user-service/users, /user-service/token/reissue
+            - Method=POST
+          filters:
+            - RewritePath=/user-service/(?<segment>.*), /${segment}
 
-            # newsLetter
-            - id: newsletter-service-unauthenticated
-              uri: lb://NEWSLETTER-SERVICE
-              predicates:
-                - Path=/newsletter-service/**
-              filters:
-                - RewritePath=/newsletter-service/(?<segment>.*), /${segment}
+        # 인증 필요 경로
+        - id: user-service-authenticated
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/**
+          filters:
+            - name: JwtAuthenticationFilter
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /${segment}
 
+        # === PROJECT SERVICE ===
+
+        # Swagger 문서 경로 (인증 불필요)
+        - id: project-service-swagger
+          uri: lb://PROJECT-SERVICE
+          predicates:
+            - Path=/project-service/v3/api-docs
+          filters:
+            - RewritePath=/project-service/(?<segment>.*), /${segment}
+
+        # 인증 필요 경로
+        - id: project-service-authenticated
+          uri: lb://PROJECT-SERVICE
+          predicates:
+            - Path=/project-service/**
+          filters:
+            - RewritePath=/project-service/(?<segment>.*), /${segment}
+
+        # === NEWSLETTER SERVICE ===
+
+        # 인증 불필요
+        - id: newsletter-service-unauthenticated
+          uri: lb://NEWSLETTER-SERVICE
+          predicates:
+            - Path=/newsletter-service/**
+          filters:
+            - RewritePath=/newsletter-service/(?<segment>.*), /${segment}
 
 jwt:
   secret: apfhdapfhdrnldudnsapxkahddldpdydnglglwkrdmsehffhqustlsgksapxkahd
@@ -53,6 +72,10 @@ jwt:
 springdoc:
   swagger-ui:
     use-root-path: true
+    persist-authorization: true
     urls:
       - name: newsletter-service
         url: http://localhost:8000/newsletter-service/v3/api-docs
+
+      - name: project-service
+        url: http://localhost:8000/project-service/v3/api-docs

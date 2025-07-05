@@ -49,3 +49,10 @@ spring:
 jwt:
   secret: apfhdapfhdrnldudnsapxkahddldpdydnglglwkrdmsehffhqustlsgksapxkahd
   expiration: 86400000
+
+springdoc:
+  swagger-ui:
+    use-root-path: true
+    urls:
+      - name: newsletter-service
+        url: http://localhost:8000/newsletter-service/v3/api-docs

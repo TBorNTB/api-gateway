@@ -9,7 +9,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: ${secrets.EUREKA_DEFAULTZONE}
+      defaultZone: http://localhost:8761
 
 spring:
   application:
@@ -89,7 +89,7 @@ spring:
             - RewritePath=/archive-service/(?<segment>.*), /${segment}
 
 jwt:
-  secret: ${secrets.JWT_SECRET}
+  secret: asdfasdf
   expiration: 86400000
 
 springdoc:

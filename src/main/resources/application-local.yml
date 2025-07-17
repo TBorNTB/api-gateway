@@ -1,0 +1,110 @@
+server:
+  port: 8000
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # === USER SERVICE1 ===
+        - id: user-service-swagger
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/v3/api-docs
+          filters:
+            - RewritePath=/user-service/(?<segment>.*), /${segment}
+
+        # 인증 불필요 경로
+        - id: user-service-unauthenticated
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/login, /user-service/users, /user-service/token/reissue
+            - Method=POST
+          filters:
+            - RewritePath=/user-service/(?<segment>.*), /${segment}
+
+        # 인증 필요 경로
+        - id: user-service-authenticated
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/**
+          filters:
+            - name: JwtAuthenticationFilter
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /${segment}
+
+        # === PROJECT SERVICE ===
+
+        # Swagger 문서 경로 (인증 불필요)
+        - id: project-service-swagger
+          uri: lb://PROJECT-SERVICE
+          predicates:
+            - Path=/project-service/v3/api-docs
+          filters:
+            - RewritePath=/project-service/(?<segment>.*), /${segment}
+
+        # 인증 필요 경로
+        - id: project-service-authenticated
+          uri: lb://PROJECT-SERVICE
+          predicates:
+            - Path=/project-service/**
+          filters:
+            - RewritePath=/project-service/(?<segment>.*), /${segment}
+
+        # === NEWSLETTER SERVICE ===
+
+        # 인증 불필요
+        - id: newsletter-service-unauthenticated
+          uri: lb://NEWSLETTER-SERVICE
+          predicates:
+            - Path=/newsletter-service/**
+          filters:
+            - RewritePath=/newsletter-service/(?<segment>.*), /${segment}
+
+            # === CHAT SERVICE ===
+        - id: chat-service-unauthenticated
+          uri: lb://CHAT-SERVICE
+          predicates:
+            - Path=/chat-service/**
+          filters:
+            - RewritePath=/chat-service/(?<segment>.*), /${segment}
+
+        # === ARCHIVE SERVICE ===
+        - id: archive-service-unauthenticated
+          uri: lb://ARCHIVE-SERVICE
+          predicates:
+            - Path=/archive-service/**
+          filters:
+            - RewritePath=/archive-service/(?<segment>.*), /${segment}
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000
+
+springdoc:
+  swagger-ui:
+    use-root-path: true
+    persist-authorization: true
+    urls:
+      - name: newsletter-service
+        url: http://localhost:8000/newsletter-service/v3/api-docs
+
+      - name: project-service
+        url: http://localhost:8000/project-service/v3/api-docs
+
+      - name: archive-service
+        url: http://localhost:8000/archive-service/v3/api-docs
+
+      - name: user-service
+        url: http://localhost:8000/user-service/v3/api-docs
+
+      - name: chat-service
+        url: http://localhost:8000/chat-service/v3/api-docs

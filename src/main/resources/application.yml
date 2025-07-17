@@ -89,7 +89,7 @@ spring:
             - RewritePath=/archive-service/(?<segment>.*), /${segment}
 
 jwt:
-  secret: ${secrets.JWT_SECRET}
+  secret: asdf
   expiration: 86400000
 
 springdoc:

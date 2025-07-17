@@ -38,13 +38,13 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: 🐳 Docker 이미지 생성
-        run: docker build -t ${{ IMAGE_NAME }} .
+        run: docker build -t ${{ secrets.IMAGE_NAME }} .
 
       - name: 🏷️ Docker 이미지에 Tag 붙이기
-        run: docker tag gateway ${{ steps.login-ecr.outputs.registry }}/${{ IMAGE_NAME }}:latest
+        run: docker tag gateway ${{ steps.login-ecr.outputs.registry }}/${{ secrets.IMAGE_NAME }}:latest
 
       - name: 🚀 ECR에 Docker 이미지 Push
-        run: docker push ${{ steps.login-ecr.outputs.registry }}/${{ IMAGE_NAME }}:latest
+        run: docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.IMAGE_NAME }}:latest
 
       - name: 🔑 SSH로 EC2에 접속 및 배포
         uses: appleboy/ssh-action@v1.0.3
@@ -56,12 +56,12 @@ jobs:
           script: |
             docker stop gateway || true
             docker rm gateway || true
-            docker pull ${{ steps.login-ecr.outputs.registry }}/${{ IMAGE_NAME }}:latest
-            docker run -d --name ${{ IMAGE_NAME }} -p 8000:8000 \
+            docker pull ${{ steps.login-ecr.outputs.registry }}/${{ secrets.IMAGE_NAME }}:latest
+            docker run -d --name ${{ secrets.IMAGE_NAME }} -p 8000:8000 \
               -e S3_SECRET_KEY="${{ secrets.S3_SECRET_KEY }}" \
               -e S3_BUCKET="${{ secrets.S3_BUCKET }}" \
               -e S3_ACCESS_KEY="${{ secrets.S3_ACCESS_KEY }}" \
               -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
               -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
-              ${{ steps.login-ecr.outputs.registry }}/${{ IMAGE_NAME }}:latest
+              ${{ steps.login-ecr.outputs.registry }}/${{ secrets.IMAGE_NAME }}:latest
 

@@ -60,7 +60,7 @@ jobs:
           script_stop: true
           script: |
             aws ecr get-login-password --region ap-northeast-2 | \
-              docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
+              docker login --username AWS --password-stdin 869508798906.dkr.ecr.ap-northeast-2.amazonaws.com
 
             docker stop ${{ secrets.IMAGE_NAME }} || true
             docker rm ${{ secrets.IMAGE_NAME }} || true

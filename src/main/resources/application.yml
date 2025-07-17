@@ -17,6 +17,12 @@ spring:
     gateway:
       routes:
         # === USER SERVICE ===
+        - id: user-service-swagger
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/v3/api-docs
+          filters:
+            - RewritePath=/user-service/(?<segment>.*), /${segment}
 
         # 인증 불필요 경로
         - id: user-service-unauthenticated
@@ -65,6 +71,22 @@ spring:
           filters:
             - RewritePath=/newsletter-service/(?<segment>.*), /${segment}
 
+            # === CHAT SERVICE ===
+        - id: chat-service-unauthenticated
+          uri: lb://CHAT-SERVICE
+          predicates:
+            - Path=/chat-service/**
+          filters:
+            - RewritePath=/chat-service/(?<segment>.*), /${segment}
+
+        # === ARCHIVE SERVICE ===
+        - id: archive-service-unauthenticated
+          uri: lb://ARCHIVE-SERVICE
+          predicates:
+            - Path=/archive-service/**
+          filters:
+            - RewritePath=/archive-service/(?<segment>.*), /${segment}
+
 jwt:
   secret: apfhdapfhdrnldudnsapxkahddldpdydnglglwkrdmsehffhqustlsgksapxkahd
   expiration: 86400000
@@ -79,3 +101,12 @@ springdoc:
 
       - name: project-service
         url: http://localhost:8000/project-service/v3/api-docs
+
+      - name: archive-service
+        url: http://localhost:8000/archive-service/v3/api-docs
+
+      - name: user-service
+        url: http://localhost:8000/user-service/v3/api-docs
+
+      - name: chat-service
+        url: http://localhost:8000/chat-service/v3/api-docs

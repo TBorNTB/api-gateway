@@ -63,5 +63,8 @@ jobs:
               -e S3_ACCESS_KEY="${{ secrets.S3_ACCESS_KEY }}" \
               -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
               -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+              -e DB_PASSWORD="${{ secrets.JWT_SECRET }}" \
+              -e DB_PASSWORD="${{ secrets.EUREKA_DEFAULTZONE }}" \
+            
               ${{ steps.login-ecr.outputs.registry }}/${{ secrets.IMAGE_NAME }}:latest
 

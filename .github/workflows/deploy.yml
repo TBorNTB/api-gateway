@@ -41,7 +41,7 @@ jobs:
         run: docker build -t ${{ secrets.IMAGE_NAME }} .
 
       - name: 🏷️ Docker 이미지에 Tag 붙이기
-        run: docker tag gateway ${{ steps.login-ecr.outputs.registry }}/${{ secrets.IMAGE_NAME }}:latest
+        run: docker tag ${{ secrets.IMAGE_NAME }} ${{ steps.login-ecr.outputs.registry }}/${{ secrets.IMAGE_NAME }}:latest
 
       - name: 🚀 ECR에 Docker 이미지 Push
         run: docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.IMAGE_NAME }}:latest

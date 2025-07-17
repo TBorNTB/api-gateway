@@ -75,4 +75,4 @@ jobs:
               -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
               -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
               -e EUREKA_DEFAULTZONE="${{ secrets.EUREKA_DEFAULTZONE }}" \
-              ${{ secrets.ECR_REGISTRY }}/${{ secrets.REPOSITORY_NAME }}:latest
+              ${{ steps.login-ecr.outputs.registry }}/${{ secrets.REPOSITORY_NAME }}:latest

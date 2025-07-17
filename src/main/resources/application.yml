@@ -1,6 +1,9 @@
 server:
   port: 8000
 
+  profiles:
+    active: default
+
 eureka:
   client:
     register-with-eureka: true

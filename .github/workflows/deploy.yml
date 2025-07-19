@@ -53,6 +53,7 @@ jobs:
     steps:
       - name: 🔑 SSH로 EC2에 접속 및 배포
         uses: appleboy/ssh-action@v1.0.3
+        debug: true
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}

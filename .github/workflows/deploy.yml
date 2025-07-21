@@ -40,10 +40,10 @@ jobs:
         run: docker build -t ${{ secrets.IMAGE_NAME }} .
 
       - name: 🏷️ Docker 이미지에 Tag 붙이기
-        run: docker tag ${{ secrets.IMAGE_NAME }} ${{ steps.login-ecr.outputs.registry }}/${{ secrets.REPOSITORY_NAME }}:latest
+        run: docker tag ${{ secrets.IMAGE_NAME }} ${{ steps.login-ecr.outputs.registry }}/${{ secrets.REPOSITORY_NAME }}:${{ secrets.IMAGE_NAME }}
 
       - name: 🚀 ECR에 Docker 이미지 Push
-        run: docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.REPOSITORY_NAME }}:latest
+        run: docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.REPOSITORY_NAME }}:${{ secrets.IMAGE_NAME }}
 
   deploy-to-ec2:
     name: 🚀 Deploy To EC2
@@ -66,7 +66,7 @@ jobs:
             docker stop ${{ secrets.IMAGE_NAME }} || true
             docker rm ${{ secrets.IMAGE_NAME }} || true
 
-            docker pull 869508798906.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.REPOSITORY_NAME }}:latest
+            docker pull 869508798906.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.REPOSITORY_NAME }}:${{ secrets.IMAGE_NAME }}
 
             docker run -d --name ${{ secrets.IMAGE_NAME }} -p 8000:8000 \
               -e S3_SECRET_KEY="${{ secrets.S3_SECRET_KEY }}" \
@@ -76,4 +76,4 @@ jobs:
               -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
               -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
               -e EUREKA_DEFAULTZONE="${{ secrets.EUREKA_DEFAULTZONE }}" \
-              869508798906.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.REPOSITORY_NAME }}:latest
+              869508798906.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.REPOSITORY_NAME }}:${{ secrets.IMAGE_NAME }}

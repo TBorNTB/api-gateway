@@ -13,77 +13,79 @@ spring:
     name: api-gateway
   cloud:
     gateway:
-      routes:
-        # === USER SERVICE1 ===
-        - id: user-service-swagger
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/user-service/v3/api-docs
-          filters:
-            - RewritePath=/user-service/(?<segment>.*), /${segment}
+      server:
+        webflux:
+          routes:
+            # === USER SERVICE1 ===
+            - id: user-service-swagger
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/v3/api-docs
+              filters:
+                - RewritePath=/user-service/(?<segment>.*), /${segment}
 
-        # 인증 불필요 경로
-        - id: user-service-unauthenticated
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/user-service/login, /user-service/users, /user-service/token/reissue
-            - Method=POST
-          filters:
-            - RewritePath=/user-service/(?<segment>.*), /${segment}
+            # 인증 불필요 경로
+            - id: user-service-unauthenticated
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/login, /user-service/users, /user-service/token/reissue
+                - Method=POST
+              filters:
+                - RewritePath=/user-service/(?<segment>.*), /${segment}
 
-        # 인증 필요 경로
-        - id: user-service-authenticated
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/user-service/**
-          filters:
-            - name: JwtAuthenticationFilter
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/user-service/(?<segment>.*), /${segment}
+            # 인증 필요 경로
+            - id: user-service-authenticated
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/**
+              filters:
+                - name: JwtAuthenticationFilter
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/user-service/(?<segment>.*), /${segment}
 
-        # === PROJECT SERVICE ===
+            # === PROJECT SERVICE ===
 
-        # Swagger 문서 경로 (인증 불필요)
-        - id: project-service-swagger
-          uri: lb://PROJECT-SERVICE
-          predicates:
-            - Path=/project-service/v3/api-docs
-          filters:
-            - RewritePath=/project-service/(?<segment>.*), /${segment}
+            # Swagger 문서 경로 (인증 불필요)
+            - id: project-service-swagger
+              uri: lb://PROJECT-SERVICE
+              predicates:
+                - Path=/project-service/v3/api-docs
+              filters:
+                - RewritePath=/project-service/(?<segment>.*), /${segment}
 
-        # 인증 필요 경로
-        - id: project-service-authenticated
-          uri: lb://PROJECT-SERVICE
-          predicates:
-            - Path=/project-service/**
-          filters:
-            - RewritePath=/project-service/(?<segment>.*), /${segment}
+            # 인증 필요 경로
+            - id: project-service-authenticated
+              uri: lb://PROJECT-SERVICE
+              predicates:
+                - Path=/project-service/**
+              filters:
+                - RewritePath=/project-service/(?<segment>.*), /${segment}
 
-        # === NEWSLETTER SERVICE ===
+            # === NEWSLETTER SERVICE ===
 
-        # 인증 불필요
-        - id: newsletter-service-unauthenticated
-          uri: lb://NEWSLETTER-SERVICE
-          predicates:
-            - Path=/newsletter-service/**
-          filters:
-            - RewritePath=/newsletter-service/(?<segment>.*), /${segment}
+            # 인증 불필요
+            - id: newsletter-service-unauthenticated
+              uri: lb://NEWSLETTER-SERVICE
+              predicates:
+                - Path=/newsletter-service/**
+              filters:
+                - RewritePath=/newsletter-service/(?<segment>.*), /${segment}
 
-            # === CHAT SERVICE ===
-        - id: chat-service-unauthenticated
-          uri: lb://CHAT-SERVICE
-          predicates:
-            - Path=/chat-service/**
-          filters:
-            - RewritePath=/chat-service/(?<segment>.*), /${segment}
+                # === CHAT SERVICE ===
+            - id: chat-service-unauthenticated
+              uri: lb://CHAT-SERVICE
+              predicates:
+                - Path=/chat-service/**
+              filters:
+                - RewritePath=/chat-service/(?<segment>.*), /${segment}
 
-        # === ARCHIVE SERVICE ===
-        - id: archive-service-unauthenticated
-          uri: lb://ARCHIVE-SERVICE
-          predicates:
-            - Path=/archive-service/**
-          filters:
-            - RewritePath=/archive-service/(?<segment>.*), /${segment}
+            # === ARCHIVE SERVICE ===
+            - id: archive-service-unauthenticated
+              uri: lb://ARCHIVE-SERVICE
+              predicates:
+                - Path=/archive-service/**
+              filters:
+                - RewritePath=/archive-service/(?<segment>.*), /${segment}
 
 jwt:
   secret: ${JWT_SECRET}

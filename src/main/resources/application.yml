@@ -15,6 +15,12 @@ spring:
   application:
     name: api-gateway
   cloud:
+    discovery:
+      enabled: true
+    loadbalancer:
+      ribbon:
+        enabled: false
+
     gateway:
       server:
         webflux:

@@ -68,7 +68,9 @@ jobs:
 
             docker pull 869508798906.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.REPOSITORY_NAME }}:${{ secrets.IMAGE_NAME }}
 
-            docker run -d --name ${{ secrets.IMAGE_NAME }} -p 8000:8000 \
+            docker run -d --name ${{ secrets.IMAGE_NAME }} \
+              --network ${{secrets.DOCKER_NETWORK_NAME}} \
+              -p 8000:8000 \
               -e S3_SECRET_KEY="${{ secrets.S3_SECRET_KEY }}" \
               -e S3_BUCKET="${{ secrets.S3_BUCKET }}" \
               -e S3_ACCESS_KEY="${{ secrets.S3_ACCESS_KEY }}" \

@@ -33,7 +33,16 @@ spring:
               filters:
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
 
-            # 인증 불필요 경로
+            # OAuth2 인증 불필요 경로 (GET 메소드)
+            - id: user-service-oauth2
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/oauth2/authorization/github, /user-service/users/callback
+                - Method=GET
+              filters:
+                - RewritePath=/user-service/(?<segment>.*), /${segment}
+
+            # 인증 불필요 경로 (POST 메소드)
             - id: user-service-unauthenticated
               uri: lb://USER-SERVICE
               predicates:

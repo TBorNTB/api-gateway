@@ -6,9 +6,10 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 
 // GatewayFilter - JWT 검증 후 헤더 추가
 @Component
@@ -30,17 +31,18 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             ServerHttpRequest request = exchange.getRequest();
             String path = request.getURI().getPath();
 
-            // Authorization 헤더에서 토큰 추출
-            String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+            // 쿠키에서 accessToken 추출
+            MultiValueMap<String, HttpCookie> cookies = request.getCookies();
+            HttpCookie accessTokenCookie = cookies.getFirst("accessToken");
 
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            if (accessTokenCookie == null) {
                 if (config.isLogEnabled()) {
-                    log.warn("Authorization 헤더가 없거나 형식이 잘못됨 - Path: {}", path);
+                    log.warn("accessToken 쿠키가 없음 - Path: {}", path);
                 }
-                return errorResponseUtil.writeBadRequestResponse(exchange, "Authorization 헤더가 필요합니다");
+                return errorResponseUtil.writeBadRequestResponse(exchange, "accessToken 쿠키가 필요합니다");
             }
 
-            String token = authHeader.substring(7);
+            String token = accessTokenCookie.getValue();
 
             try {
                 // JWT 토큰 검증

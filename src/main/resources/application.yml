@@ -37,7 +37,7 @@ spring:
             - id: user-service-oauth2
               uri: lb://USER-SERVICE
               predicates:
-                - Path=/user-service/oauth2/authorization/github, /user-service/users/callback
+                - Path=/user-service/oauth2/authorization/github, /user-service/login/oauth2/code/github
                 - Method=GET
               filters:
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
@@ -106,7 +106,7 @@ spring:
                 - RewritePath=/archive-service/(?<segment>.*), /${segment}
 
 jwt:
-  secret: asdf
+  secret: {JWT_SECRET}
   expiration: 86400000
 
 springdoc:

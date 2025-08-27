@@ -89,13 +89,13 @@ spring:
               filters:
                 - RewritePath=/newsletter-service/(?<segment>.*), /${segment}
 
-                # === CHAT SERVICE ===
-            - id: chat-service-unauthenticated
-              uri: lb://CHAT-SERVICE
+                # === META SERVICE ===
+            - id: meta-service-unauthenticated
+              uri: lb://META-SERVICE
               predicates:
-                - Path=/chat-service/**
+                - Path=/meta-service/**
               filters:
-                - RewritePath=/chat-service/(?<segment>.*), /${segment}
+                - RewritePath=/meta-service/(?<segment>.*), /${segment}
 
             # === ARCHIVE SERVICE ===
             - id: archive-service-unauthenticated
@@ -127,5 +127,5 @@ springdoc:
       - name: user-service
         url: http://localhost:8000/user-service/v3/api-docs
 
-      - name: chat-service
-        url: http://localhost:8000/chat-service/v3/api-docs
+      - name: meta-service
+        url: http://localhost:8000/meta-service/v3/api-docs

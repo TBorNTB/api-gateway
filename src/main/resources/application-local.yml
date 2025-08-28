@@ -105,6 +105,15 @@ spring:
               filters:
                 - RewritePath=/archive-service/(?<segment>.*), /${segment}
 
+            # === ELASTIC SERVICE ===
+            - id: elastic-service-unauthenticated
+              uri: lb://ELASTIC-SERVICE
+              predicates:
+                - Path=/elastic-service/**
+              filters:
+                - RewritePath=/elastic-service/(?<segment>.*), /${segment}
+
+
 
 jwt:
   secret: ${JWT_SECRET}
@@ -129,3 +138,6 @@ springdoc:
 
       - name: meta-service
         url: http://localhost:8000/meta-service/v3/api-docs
+
+      - name: elastic-service
+        url: http://localhost:8000/elastic-service/v3/api-docs

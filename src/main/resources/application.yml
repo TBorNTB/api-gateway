@@ -89,7 +89,7 @@ spring:
               filters:
                 - RewritePath=/newsletter-service/(?<segment>.*), /${segment}
 
-                # === CHAT SERVICE ===
+            # === CHAT SERVICE ===
             - id: meta-service-unauthenticated
               uri: lb://META-SERVICE
               predicates:

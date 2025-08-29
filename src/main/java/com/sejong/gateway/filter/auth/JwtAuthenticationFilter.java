@@ -51,19 +51,19 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                 }
 
                 // 토큰에서 사용자 정보 추출
-                String userId = jwtUtil.getUserIdFromToken(token);
+                String username = jwtUtil.getUsernameFromToken(token);
                 String userRole = jwtUtil.getUserRoleFromToken(token);
 //                String userEmail = jwtUtil.getUserEmailFromToken(token);
 
                 // 백엔드 서비스로 사용자 정보 전달을 위한 헤더 추가
                 ServerHttpRequest modifiedRequest = request.mutate()
-                        .header("X-User-Id", userId)
+                        .header("X-User-Id", username)
                         .header("X-User-Role", userRole)
 //                        .header("X-User-Email", userEmail)
                         .build();
 
                 if (config.isLogEnabled()) {
-                    log.debug("JWT 인증 성공 - UserId: {}, Role: {}, Path: {}", userId, userRole, path);
+                    log.debug("JWT 인증 성공 - UserId: {}, Role: {}, Path: {}", username, userRole, path);
                 }
 
                 return chain.filter(exchange.mutate().request(modifiedRequest).build());

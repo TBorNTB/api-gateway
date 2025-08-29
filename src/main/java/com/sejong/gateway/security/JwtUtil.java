@@ -46,7 +46,7 @@ public class JwtUtil {
                 .getBody();
     }
 
-    public String getUserIdFromToken(String token) {
+    public String getUsernameFromToken(String token) {
         return getClaimsFromToken(token).get("username", String.class);
     }
 

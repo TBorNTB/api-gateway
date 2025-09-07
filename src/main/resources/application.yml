@@ -110,7 +110,7 @@ spring:
             - id: archive-service-unauthenticated
               uri: lb://ARCHIVE-SERVICE
               predicates:
-                - Path=/archive-service/news/health, /archive-service/news/offset, /archive-service/news/cursor, /archive-service/news/{newsId}
+                - Path=/archive-service/news/health, /archive-service/news/offset, /archive-service/news/cursor, /archive-service/news/{newsId}, /archive-service/cs-knowledge/offset, /archive-service/cs-knowledge/cursor,/archive-service/cs-knowledge/{csKnowledgeId},/archive-service/cs-knowledge/{csKnowledgeId}/exists, /archive-service/cs-knowledge/category/**,/archive-service/cs-knowledge/unsent
                 - Method=GET
               filters:
                 - RewritePath=/archive-service/(?<segment>.*), /${segment}
@@ -134,7 +134,7 @@ spring:
                 - RewritePath=/elastic-service/(?<segment>.*), /${segment}
 
 jwt:
-  secret: {JWT_SECRET}
+  secret: ${JWT_SECRET}
   expiration: 86400000
 
 springdoc:

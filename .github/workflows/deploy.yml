@@ -21,6 +21,9 @@ jobs:
           java-version: 21
 
       - name: 🧪 테스트 및 빌드하기
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          EUREKA_DEFAULTZONE: ${{ secrets.EUREKA_DEFAULTZONE }}
         run: |
           chmod +x ./gradlew
           ./gradlew clean build

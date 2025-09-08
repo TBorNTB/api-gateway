@@ -106,7 +106,7 @@ spring:
               filters:
                 - RewritePath=/archive-service/(?<segment>.*), /${segment}
             
-            # 인증 불필요 경로 (조회 관련)
+            # 인증 불필요 경로(조회 관련)
             - id: archive-service-unauthenticated
               uri: lb://ARCHIVE-SERVICE
               predicates:

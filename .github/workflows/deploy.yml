@@ -82,5 +82,5 @@ jobs:
               -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
               -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
               -e EUREKA_DEFAULTZONE="${{ secrets.EUREKA_DEFAULTZONE }}" \
-              -e EC2_HOST_INFRA="${{ secrets.EC2_HOT_INFRA }}" \
+              -e EC2_HOST_INFRA="${{ secrets.EC2_HOST_INFRA }}" \
               869508798906.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.REPOSITORY_NAME }}:${{ secrets.IMAGE_NAME }}

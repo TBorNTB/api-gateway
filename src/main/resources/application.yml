@@ -143,19 +143,19 @@ springdoc:
     persist-authorization: true
     urls:
       - name: newsletter-service
-        url: http://3.37.124.162:8000/newsletter-service/v3/api-docs
+        url: http://43.202.91.154:8000/newsletter-service/v3/api-docs
 
       - name: project-service
-        url: http://3.37.124.162:8000/project-service/v3/api-docs
+        url: http://43.202.91.154:8000/project-service/v3/api-docs
 
       - name: archive-service
-        url: http://3.37.124.162:8000/archive-service/v3/api-docs
+        url: http://43.202.91.154:8000/archive-service/v3/api-docs
 
       - name: user-service
-        url: http://3.37.124.162:8000/user-service/v3/api-docs
+        url: http://43.202.91.154:8000/user-service/v3/api-docs
 
       - name: meta-service
-        url: http://3.37.124.162:8000/meta-service/v3/api-docs
+        url: http://43.202.91.154:8000/meta-service/v3/api-docs
 
       - name: elastic-service
-        url: http://3.37.124.162:8000/elastic-service/v3/api-docs
+        url: http://43.202.91.154:8000/elastic-service/v3/api-docs

@@ -127,7 +127,7 @@ spring:
 
             # === ELASTIC SERVICE ===
             - id: elastic-service-unauthenticated
-              uri: lb://ELASTIC-SERVICE
+              uri: http://${EC2_HOST_INFRA}:8080
               predicates:
                 - Path=/elastic-service/**
               filters:
@@ -158,4 +158,4 @@ springdoc:
         url: http://${EC2_HOST_APP}:8000/meta-service/v3/api-docs
 
       - name: elastic-service
-        url: http://${EC2_HOST_INFRA}:8080/elastic-service/v3/api-docs
+        url: http://${EC2_HOST_APP}:8000/elastic-service/v3/api-docs

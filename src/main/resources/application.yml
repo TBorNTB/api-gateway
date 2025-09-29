@@ -105,7 +105,7 @@ spring:
                 - Path=/archive-service/v3/api-docs
               filters:
                 - RewritePath=/archive-service/(?<segment>.*), /${segment}
-            
+
             # 인증 불필요 경로(조회 관련)
             - id: archive-service-unauthenticated
               uri: lb://ARCHIVE-SERVICE
@@ -127,7 +127,7 @@ spring:
 
             # === ELASTIC SERVICE ===
             - id: elastic-service-unauthenticated
-              uri: lb://172.31.41.153:8080
+              uri: lb://ELASTIC-SERVICE
               predicates:
                 - Path=/elastic-service/**
               filters:

@@ -125,13 +125,13 @@ spring:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/archive-service/(?<segment>.*), /${segment}
 
-#            # === ELASTIC SERVICE ===
-#            - id: elastic-service-unauthenticated
-#              uri: http://${EC2_HOST_INFRA}:8080
-#              predicates:
-#                - Path=/elastic-service/**
-#              filters:
-#                - RewritePath=/elastic-service/(?<segment>.*), /${segment}
+            # === ELASTIC SERVICE ===
+            - id: elastic-service-unauthenticated
+              uri: lb://ELASTIC-SERVICE
+              predicates:
+                - Path=/elastic-service/**
+              filters:
+                - RewritePath=/elastic-service/(?<segment>.*), /${segment}
 
 jwt:
   secret: ${JWT_SECRET}

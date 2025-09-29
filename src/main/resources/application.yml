@@ -127,7 +127,7 @@ spring:
 
             # === ELASTIC SERVICE ===
             - id: elastic-service-unauthenticated
-              uri: lb://ELASTIC-SERVICE
+              uri: lb://172.31.41.153:8080
               predicates:
                 - Path=/elastic-service/**
               filters:

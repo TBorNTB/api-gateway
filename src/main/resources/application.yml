@@ -124,6 +124,13 @@ spring:
                 - name: JwtAuthenticationFilter
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/archive-service/(?<segment>.*), /${segment}
+          globals:
+            cors-configurations:
+              '[/**]':
+                          allowedOriginPatterns: "*"
+                          allowedMethods: "*"
+                          allowedHeaders: "*"
+                          allowCredentials: true
 
 #            # === ELASTIC SERVICE ===
 #            - id: elastic-service-unauthenticated

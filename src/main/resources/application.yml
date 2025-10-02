@@ -43,7 +43,7 @@ spring:
         - id: user-service-unauthenticated
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/user-service/users, /user-service/users/login, /user-service/token/reissue, /api/s3/presigned-url
+            - Path=/user-service/users, /user-service/users/login, /user-service/token/reissue, /api/s3/presigned-url, /user-service/users/role
             - Method=POST
           filters:
             - RewritePath=/user-service/(?<segment>.*), /${segment}
@@ -122,13 +122,15 @@ spring:
           filters:
             - RewritePath=/elastic-service/(?<segment>.*), /${segment}
 
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOriginPatterns: "*"
-            allowedMethods: "*"
-            allowedHeaders: "*"
-            allowCredentials: true
+      server:
+        webflux:
+          globals:
+            cors-configurations:
+              '[/**]':
+                          allowedOriginPatterns: "*"
+                          allowedMethods: "*"
+                          allowedHeaders: "*"
+                          allowCredentials: true
 
 jwt:
   secret: ${JWT_SECRET}

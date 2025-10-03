@@ -23,13 +23,6 @@ spring:
     gateway:
       server:
         webflux:
-          globals:
-            cors-configurations:
-              '[/**]':
-                          allowedOriginPatterns: "*"
-                          allowedMethods: "*"
-                          allowedHeaders: "*"
-                          allowCredentials: true
           routes:
             # === USER SERVICE ===
                     - id: user-service-swagger

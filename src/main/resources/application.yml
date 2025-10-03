@@ -36,7 +36,7 @@ spring:
                     - id: user-service-oauth2
                       uri: lb://USER-SERVICE
                       predicates:
-                        - Path=/user-service/oauth2/authorization/github, /user-service/login/oauth2/code/github, /user-service/users, /user-service/users/role
+                        - Path=/user-service/oauth2/authorization/github, /user-service/login/oauth2/code/github, /user-service/users, /user-service/users/role, /user-service/users/role/all
                         - Method=GET
                       filters:
                         - RewritePath=/user-service/(?<segment>.*), /${segment}

@@ -57,7 +57,6 @@ spring:
                         - Path=/user-service/**
                       filters:
                         - name: JwtAuthenticationFilter
-                        - RemoveRequestHeader=Cookie
                         - RewritePath=/user-service/(?<segment>.*), /${segment}
 
                     # === PROJECT SERVICE ===

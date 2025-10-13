@@ -121,7 +121,6 @@ spring:
                 - Path=/archive-service/**
               filters:
                 - name: JwtAuthenticationFilter
-                - RemoveRequestHeader=Cookie
                 - RewritePath=/archive-service/(?<segment>.*), /${segment}
 
             # === ELASTIC SERVICE ===

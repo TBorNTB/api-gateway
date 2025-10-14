@@ -16,8 +16,8 @@ spring:
   
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
+      host: ${EC2_HOST_INFRA_PRIVATE}
+      port: 6379
       timeout: 2s
   
   cloud:

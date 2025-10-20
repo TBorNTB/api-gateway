@@ -10,4 +10,9 @@ public class TestController {
     public String health() {
         return "OK";
     }
+
+    @GetMapping("/error")
+    public String testLoggingError(){
+        throw new IllegalArgumentException();
+    }
 }

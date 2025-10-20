@@ -24,7 +24,7 @@
       <pattern>[%thread] [%date] [%level] [%logger{36}] - %msg%n</pattern>
     </layout>
     <logGroupName>/aws/api-gateway/prod</logGroupName>
-    <logStreamName>api-gateway-${HOSTNAME}</logStreamName>
+    <logStreamName>api-gateway-${EC2_HOST_APP:unknown}</logStreamName>
     <logRegion>ap-northeast-2</logRegion>
   </appender>
 

@@ -13,8 +13,9 @@ public class TestController {
         return "OK";
     }
 
-    @GetMapping("/error")
-    public void testLoggingError(){
+    @GetMapping("/error-logging")
+    public String testLoggingError(){
         log.error("CloudWatch 전송 테스트 - {}", System.currentTimeMillis());
+        return "ERR_LOGGED";
     }
 }

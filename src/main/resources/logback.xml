@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
   <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
   <conversionRule conversionWord="wex"
@@ -8,9 +8,6 @@
   <property name="LOG_PATTERN"
     value="${LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){blue} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
 
-  <springProperty name="AWS_ACCESS_KEY" source="cloud.aws.credentials.accessKey"/>
-  <springProperty name="AWS_SECRET_KEY" source="cloud.aws.credentials.secretKey"/>
-
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <layout class="ch.qos.logback.classic.PatternLayout">
       <Pattern>${LOG_PATTERN}</Pattern>
@@ -19,49 +16,49 @@
 
   <appender name="aws_cloud_watch_log" class="ca.pjer.logback.AwsLogsAppender">
     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-      <level>ERROR</level>
+      <level>INFO</level>
     </filter>
     <layout>
       <pattern>[%thread] [%date] [%level] [%file:%line] - %msg%n</pattern>
     </layout>
-    <logGroupName>Marryting-log</logGroupName>
-    <logStreamUuidPrefix>Marryting-log-</logStreamUuidPrefix>
+    <logGroupName>/aws/api-gateway/prod</logGroupName>
+    <logStreamUuidPrefix>api-gateway-</logStreamUuidPrefix>
     <logRegion>ap-northeast-2</logRegion>
     <maxBatchLogEvents>50</maxBatchLogEvents>
     <maxFlushTimeMillis>30000</maxFlushTimeMillis>
     <maxBlockTimeMillis>5000</maxBlockTimeMillis>
-    <retentionTimeDays>0</retentionTimeDays>
-    <accessKeyId>${AWS_ACCESS_KEY}</accessKeyId>
-    <secretAccessKey>${AWS_SECRET_KEY}</secretAccessKey>
+    <retentionTimeDays>7</retentionTimeDays>
+    <createLogGroup>true</createLogGroup>
   </appender>
 
   <springProfile name="local,dev">
     <root level="info">
       <appender-ref ref="CONSOLE"/>
+      <appender-ref ref="aws_cloud_watch_log"/>
     </root>
 
+    <!-- EC2 메타데이터 로그 제외 -->
     <logger name="com.amazonaws.util.EC2MetadataUtils" level="error" additivity="false">
-    </logger>
-
-    <logger name="mashup.spring.jsmr" level="debug" additivity="false">
       <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <logger name="mashup.spring.jsmr" level="error" additivity="false">
+    <!-- 프로젝트 패키지 로깅 -->
+    <logger name="com.sejong.gateway" level="debug">
       <appender-ref ref="CONSOLE"/>
-      <appender-ref ref="aws_cloud_watch_log"/>
     </logger>
   </springProfile>
 
   <springProfile name="prod">
     <root level="info">
       <appender-ref ref="CONSOLE"/>
+      <appender-ref ref="aws_cloud_watch_log"/>
     </root>
 
     <logger name="com.amazonaws.util.EC2MetadataUtils" level="error" additivity="false">
+      <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <logger name="mashup.spring.jsmr" level="debug" additivity="false">
+    <logger name="com.sejong.gateway" level="info">
       <appender-ref ref="CONSOLE"/>
     </logger>
   </springProfile>

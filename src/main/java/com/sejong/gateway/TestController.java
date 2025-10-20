@@ -1,8 +1,10 @@
 package com.sejong.gateway;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 public class TestController {
 
@@ -12,7 +14,7 @@ public class TestController {
     }
 
     @GetMapping("/error")
-    public String testLoggingError(){
-        throw new IllegalArgumentException();
+    public void testLoggingError(){
+        log.error("CloudWatch 전송 테스트 - {}", System.currentTimeMillis());
     }
 }

@@ -15,7 +15,7 @@
     </encoder>
   </appender>
 
-  <!-- CloudWatch 로그 전송 (새 라이브러리 사용) -->
+  <!-- CloudWatch 로그 전송 -->
   <appender name="aws_cloud_watch_log" class="io.github.dibog.AwsLogAppender">
     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
       <level>INFO</level>
@@ -23,9 +23,9 @@
     <layout>
       <pattern>[%thread] [%date] [%level] [%logger{36}] - %msg%n</pattern>
     </layout>
-    <logGroupName>/aws/api-gateway/prod</logGroupName>
-    <logStreamName>api-gateway</logStreamName>
-    <logRegion>ap-northeast-2</logRegion>
+    <groupName>/aws/api-gateway/prod</groupName>
+    <streamName>api-gateway</streamName>
+    <region>ap-northeast-2</region>
   </appender>
 
   <!-- 프로파일별 설정 -->

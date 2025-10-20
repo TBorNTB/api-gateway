@@ -84,4 +84,6 @@ jobs:
               -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
               -e EUREKA_DEFAULTZONE="${{ secrets.EUREKA_DEFAULTZONE }}" \
               -e EC2_HOST_INFRA="${{ secrets.EC2_HOST_INFRA }}" \
+              -e LOGGING_IAM_ACCESS_KEY="${{secrets.LOGGING_IAM_ACCESS_KEY}}" \
+              -e LOGGING_IAM_SECRET_KEY="${{secrets.LOGGING_IAM_SECRET_KEY}}" \
               869508798906.dkr.ecr.ap-northeast-2.amazonaws.com/${{ secrets.REPOSITORY_NAME }}:${{ secrets.IMAGE_NAME }}

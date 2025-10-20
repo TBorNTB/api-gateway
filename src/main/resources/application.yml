@@ -13,7 +13,12 @@ eureka:
 spring:
   application:
     name: api-gateway
+
   cloud:
+    credential:
+      access-key: ${LOGGING_IAM_ACCESS_KEY}
+      secret-key: ${LOGGING_IAM_SECRET_KEY}
+
     discovery:
       enabled: true
     loadbalancer:

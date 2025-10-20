@@ -16,7 +16,7 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: ${EC2_HOST_INFRA_PRIVATE}
       port: 6379
       timeout: 2s
 
@@ -42,7 +42,6 @@ spring:
               redis-rate-limiter.replenishRate: ${spring.cloud.gateway.config.ratelimit.replenish}
               redis-rate-limiter.burstCapacity: ${spring.cloud.gateway.config.ratelimit.burst}
               redis-rate-limiter.requestedTokens: ${spring.cloud.gateway.config.ratelimit.tokens}
-
       server:
         webflux:
           routes:
@@ -50,29 +49,31 @@ spring:
             - id: user-service-swagger
               uri: lb://USER-SERVICE
               predicates:
-                - Path=/user-service/v3/api-docs, /user-service/api/login
+                - Path=/user-service/v3/api-docs
               filters:
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
 
-
+            # OAuth2 인증 불필요 경로 (GET 메소드)
             - id: user-service-oauth2
               uri: lb://USER-SERVICE
               predicates:
-                - Path=/user-service/oauth2/authorization/github, /user-service/login/oauth2/code/github, /user-service/users
+                - Path=/user-service/oauth2/authorization/github, /user-service/login/oauth2/code/github, /user-service/users, /user-service/users/role, /user-service/users/role/all
                 - Method=GET
               filters:
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
                 - *rl_common
 
+            # 인증 불필요 경로 (POST 메소드)
             - id: user-service-unauthenticated
               uri: lb://USER-SERVICE
               predicates:
-                - Path=/user-service/users, /user-service/users/login, /user-service/token/reissue, /user-service/api/s3/presigned-url
+                - Path=/user-service/users, /user-service/users/login, /user-service/token/reissue, /api/s3/presigned-url
                 - Method=POST
               filters:
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
                 - *rl_common
 
+            # 인증 필요 경로
             - id: user-service-authenticated
               uri: lb://USER-SERVICE
               predicates:
@@ -89,7 +90,6 @@ spring:
                 - Path=/project-service/v3/api-docs
               filters:
                 - RewritePath=/project-service/(?<segment>.*), /${segment}
-
 
             - id: project-service-authenticated
               uri: lb://PROJECT-SERVICE
@@ -108,7 +108,7 @@ spring:
                 - RewritePath=/newsletter-service/(?<segment>.*), /${segment}
                 - *rl_common
 
-            # === META SERVICE ===
+            # === CHAT SERVICE ===
             - id: meta-service-unauthenticated
               uri: lb://META-SERVICE
               predicates:
@@ -124,12 +124,12 @@ spring:
                 - Path=/archive-service/v3/api-docs
               filters:
                 - RewritePath=/archive-service/(?<segment>.*), /${segment}
-                # swagger는 보통 미적용
+                - *rl_common
 
             - id: archive-service-unauthenticated
               uri: lb://ARCHIVE-SERVICE
               predicates:
-                - Path=/archive-service/news/health, /archive-service/news/offset, /archive-service/news/cursor, /archive-service/news/{newsId}, /archive-service/cs-knowledge/offset, /archive-service/cs-knowledge/cursor,/archive-service/cs-knowledge/{csKnowledgeId},/archive-service/cs-knowledge/{csKnowledgeId}/exists, /archive-service/cs-knowledge/category/**,/archive-service/cs-knowledge/unsent
+                - Path=/archive-service/news/health, /archive-service/news/offset, /archive-service/news/cursor, /archive-service/news/{newsId}, /archive-service/cs-knowledge/offset, /archive-service/cs-knowledge/cursor, /archive-service/cs-knowledge/{csKnowledgeId}, /archive-service/cs-knowledge/{csKnowledgeId}/exists, /archive-service/cs-knowledge/category_**, /archive-service/cs-knowledge/unsent
                 - Method=GET
               filters:
                 - RewritePath=/archive-service/(?<segment>.*), /${segment}
@@ -163,14 +163,14 @@ springdoc:
     persist-authorization: true
     urls:
       - name: newsletter-service
-        url: http://localhost:8000/newsletter-service/v3/api-docs
+        url: http://${EC2_HOST_APP}:8000/newsletter-service/v3/api-docs
       - name: project-service
-        url: http://localhost:8000/project-service/v3/api-docs
+        url: http://${EC2_HOST_APP}:8000/project-service/v3/api-docs
       - name: archive-service
-        url: http://localhost:8000/archive-service/v3/api-docs
+        url: http://${EC2_HOST_APP}:8000/archive-service/v3/api-docs
       - name: user-service
-        url: http://localhost:8000/user-service/v3/api-docs
+        url: http://${EC2_HOST_APP}:8000/user-service/v3/api-docs
       - name: meta-service
-        url: http://localhost:8000/meta-service/v3/api-docs
+        url: http://${EC2_HOST_APP}:8000/meta-service/v3/api-docs
       - name: elastic-service
-        url: http://localhost:8000/elastic-service/v3/api-docs
+        url: http://${EC2_HOST_APP}:8000/elastic-service/v3/api-docs

@@ -10,39 +10,35 @@
 
   <!-- 콘솔 출력 -->
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-    <layout class="ch.qos.logback.classic.PatternLayout">
-      <Pattern>${LOG_PATTERN}</Pattern>
-    </layout>
+    <encoder>
+      <pattern>${LOG_PATTERN}</pattern>
+    </encoder>
   </appender>
 
-  <!-- CloudWatch 로그 전송 -->
-  <appender name="aws_cloud_watch_log" class="ca.pjer.logback.AwsLogsAppender">
+  <!-- CloudWatch 로그 전송 (새 라이브러리 사용) -->
+  <appender name="aws_cloud_watch_log" class="io.github.dibog.AwsLogAppender">
     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
       <level>INFO</level>
     </filter>
     <layout>
-      <pattern>[%thread] [%date] [%level] [%file:%line] - %msg%n</pattern>
+      <pattern>[%thread] [%date] [%level] [%logger{36}] - %msg%n</pattern>
     </layout>
     <logGroupName>/aws/api-gateway/prod</logGroupName>
-    <logStreamUuidPrefix>api-gateway-</logStreamUuidPrefix>
+    <logStreamName>api-gateway-${HOSTNAME}</logStreamName>
     <logRegion>ap-northeast-2</logRegion>
-    <maxBatchLogEvents>50</maxBatchLogEvents>
-    <maxFlushTimeMillis>30000</maxFlushTimeMillis>
-    <maxBlockTimeMillis>5000</maxBlockTimeMillis>
-    <retentionTimeDays>7</retentionTimeDays>
   </appender>
 
-  <!-- 루트 로거: 콘솔 + CloudWatch -->
+  <!-- 루트 로거 -->
   <root level="INFO">
     <appender-ref ref="CONSOLE"/>
     <appender-ref ref="aws_cloud_watch_log"/>
   </root>
 
-  <!-- AWS EC2 메타데이터 관련 로그는 ERROR만 -->
+  <!-- AWS 메타데이터 로그 제외 -->
   <logger name="com.amazonaws.util.EC2MetadataUtils" level="ERROR" additivity="false">
     <appender-ref ref="CONSOLE"/>
   </logger>
 
-  <!-- 프로젝트 패키지는 DEBUG 레벨 -->
+  <!-- 프로젝트 패키지 -->
   <logger name="com.sejong.gateway" level="DEBUG"/>
 </configuration>

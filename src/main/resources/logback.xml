@@ -8,12 +8,14 @@
   <property name="LOG_PATTERN"
     value="${LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){blue} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
 
+  <!-- 콘솔 출력 -->
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <layout class="ch.qos.logback.classic.PatternLayout">
       <Pattern>${LOG_PATTERN}</Pattern>
     </layout>
   </appender>
 
+  <!-- CloudWatch 로그 전송 -->
   <appender name="aws_cloud_watch_log" class="ca.pjer.logback.AwsLogsAppender">
     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
       <level>INFO</level>
@@ -28,38 +30,19 @@
     <maxFlushTimeMillis>30000</maxFlushTimeMillis>
     <maxBlockTimeMillis>5000</maxBlockTimeMillis>
     <retentionTimeDays>7</retentionTimeDays>
-    <createLogGroup>true</createLogGroup>
   </appender>
 
-  <springProfile name="local,dev">
-    <root level="info">
-      <appender-ref ref="CONSOLE"/>
-      <appender-ref ref="aws_cloud_watch_log"/>
-    </root>
+  <!-- 루트 로거: 콘솔 + CloudWatch -->
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="aws_cloud_watch_log"/>
+  </root>
 
-    <!-- EC2 메타데이터 로그 제외 -->
-    <logger name="com.amazonaws.util.EC2MetadataUtils" level="error" additivity="false">
-      <appender-ref ref="CONSOLE"/>
-    </logger>
+  <!-- AWS EC2 메타데이터 관련 로그는 ERROR만 -->
+  <logger name="com.amazonaws.util.EC2MetadataUtils" level="ERROR" additivity="false">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
 
-    <!-- 프로젝트 패키지 로깅 -->
-    <logger name="com.sejong.gateway" level="debug">
-      <appender-ref ref="CONSOLE"/>
-    </logger>
-  </springProfile>
-
-  <springProfile name="prod">
-    <root level="info">
-      <appender-ref ref="CONSOLE"/>
-      <appender-ref ref="aws_cloud_watch_log"/>
-    </root>
-
-    <logger name="com.amazonaws.util.EC2MetadataUtils" level="error" additivity="false">
-      <appender-ref ref="CONSOLE"/>
-    </logger>
-
-    <logger name="com.sejong.gateway" level="info">
-      <appender-ref ref="CONSOLE"/>
-    </logger>
-  </springProfile>
+  <!-- 프로젝트 패키지는 DEBUG 레벨 -->
+  <logger name="com.sejong.gateway" level="DEBUG"/>
 </configuration>

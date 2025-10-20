@@ -24,15 +24,25 @@
       <pattern>[%thread] [%date] [%level] [%logger{36}] - %msg%n</pattern>
     </layout>
     <logGroupName>/aws/api-gateway/prod</logGroupName>
-    <logStreamName>api-gateway-${EC2_HOST_APP:unknown}</logStreamName>
+    <logStreamName>api-gateway</logStreamName>
     <logRegion>ap-northeast-2</logRegion>
   </appender>
 
-  <!-- 루트 로거 -->
-  <root level="INFO">
-    <appender-ref ref="CONSOLE"/>
-    <appender-ref ref="aws_cloud_watch_log"/>
-  </root>
+  <!-- 프로파일별 설정 -->
+  <springProfile name="local,dev,prod">
+    <!-- 실제 환경: 콘솔 + CloudWatch -->
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+      <appender-ref ref="aws_cloud_watch_log"/>
+    </root>
+  </springProfile>
+
+  <springProfile name="test,default">
+    <!-- 테스트 환경: 콘솔만 -->
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+    </root>
+  </springProfile>
 
   <!-- AWS 메타데이터 로그 제외 -->
   <logger name="com.amazonaws.util.EC2MetadataUtils" level="ERROR" additivity="false">

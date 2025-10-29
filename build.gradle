@@ -53,7 +53,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'           // Spring Boot Actuator
     implementation 'org.springframework.cloud:spring-cloud-starter-config'             // Spring Cloud Config Client
     implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'          // Spring Cloud Bootstrap (구성 초기화 지원)
-    implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
+//    implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
 
     // AWS 공식 SDK 사용
     implementation platform('software.amazon.awssdk:bom:2.25.0')

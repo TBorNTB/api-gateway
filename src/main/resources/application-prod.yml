@@ -128,6 +128,7 @@ jwt:
 
 springdoc:
   swagger-ui:
+    enabled: true
     use-root-path: true
     persist-authorization: true
     urls:

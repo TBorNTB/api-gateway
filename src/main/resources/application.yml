@@ -13,7 +13,7 @@ eureka:
 spring:
   application:
     name: api-gateway
-
+  cloud:
     discovery:
       enabled: true
     loadbalancer:
@@ -45,7 +45,7 @@ spring:
             - id: user-service-unauthenticated
               uri: lb://USER-SERVICE
               predicates:
-                - Path=/user-service/users, /user-service/users/login, /user-service/token/reissue, /api/s3/presigned-url, /user-service/users/auth/verification-code, /user-service/users/auth/reset-password
+                - Path=/user-service/users, /user-service/users/login, /user-service/token/reissue, /api/s3/presigned-url
                 - Method=POST
               filters:
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
@@ -128,7 +128,6 @@ jwt:
 
 springdoc:
   swagger-ui:
-    enabled: true
     use-root-path: true
     persist-authorization: true
     urls:

@@ -23,7 +23,7 @@
     <layout>
       <pattern>[%thread] [%date] [%level] [%logger{36}] - %msg%n</pattern>
     </layout>
-    <groupName>/aws/api-gateway/prod</groupName>
+    <groupName>info_hub_app</groupName>
     <streamName>api-gateway</streamName>
     <region>ap-northeast-2</region>
   </appender>

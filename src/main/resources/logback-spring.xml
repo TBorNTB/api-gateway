@@ -28,21 +28,11 @@
     <region>ap-northeast-2</region>
   </appender>
 
-  <!-- 프로파일별 설정 -->
-  <springProfile name="local,dev,prod">
-    <!-- 실제 환경: 콘솔 + CloudWatch -->
-    <root level="INFO">
-      <appender-ref ref="CONSOLE"/>
-      <appender-ref ref="aws_cloud_watch_log"/>
-    </root>
-  </springProfile>
-
-  <springProfile name="test,default">
-    <!-- 테스트 환경: 콘솔만 -->
-    <root level="INFO">
-      <appender-ref ref="CONSOLE"/>
-    </root>
-  </springProfile>
+  <!-- 기본 설정: 콘솔 + CloudWatch -->
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="aws_cloud_watch_log"/>
+  </root>
 
   <!-- AWS 메타데이터 로그 제외 -->
   <logger name="com.amazonaws.util.EC2MetadataUtils" level="ERROR" additivity="false">

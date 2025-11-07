@@ -132,14 +132,14 @@ springdoc:
     persist-authorization: true
     urls:
       - name: newsletter-service
-        url: http://${EC2_HOST_APP}:8000/newsletter-service/v3/api-docs
+        url: https://api.sejongssg.kr/newsletter-service/v3/api-docs
       - name: project-service
-        url: http://${EC2_HOST_APP}:8000/project-service/v3/api-docs
+        url: https://api.sejongssg.kr/project-service/v3/api-docs
       - name: archive-service
-        url: http://${EC2_HOST_APP}:8000/archive-service/v3/api-docs
+        url: https://api.sejongssg.kr/archive-service/v3/api-docs
       - name: user-service
-        url: http://${EC2_HOST_APP}:8000/user-service/v3/api-docs
+        url: https://api.sejongssg.kr/user-service/v3/api-docs
       - name: meta-service
-        url: http://${EC2_HOST_APP}:8000/meta-service/v3/api-docs
+        url: https://api.sejongssg.kr/meta-service/v3/api-docs
       - name: elastic-service
-        url: http://${EC2_HOST_APP}:8000/elastic-service/v3/api-docs
+        url: https://api.sejongssg.kr/elastic-service/v3/api-docs

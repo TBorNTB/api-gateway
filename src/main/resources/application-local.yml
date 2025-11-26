@@ -19,10 +19,11 @@ spring:
       host: ${EC2_HOST_INFRA_PRIVATE}
       port: 6379
       timeout: 2s
-
+      
   cloud:
     discovery:
       enabled: true
+
     loadbalancer:
       ribbon:
         enabled: false
@@ -67,7 +68,7 @@ spring:
             - id: user-service-unauthenticated
               uri: lb://USER-SERVICE
               predicates:
-                - Path=/user-service/users, /user-service/users/login, /user-service/token/reissue, /api/s3/presigned-url
+                - Path=/user-service/users, /user-service/users/login, /user-service/token/reissue, /api/s3/presigned-url, /user-service/users/auth/verification-code, /user-service/users/auth/reset-password
                 - Method=POST
               filters:
                 - RewritePath=/user-service/(?<segment>.*), /${segment}

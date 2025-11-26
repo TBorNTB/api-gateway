@@ -54,10 +54,15 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'           // Spring Boot Actuator
     implementation 'org.springframework.cloud:spring-cloud-starter-config'             // Spring Cloud Config Client
     implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'          // Spring Cloud Bootstrap (구성 초기화 지원)
-    implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
 
-    // CloudWatch로 Error log를 전송하는 라이브러리
-    implementation "ca.pjer:logback-awslogs-appender:1.6.0"
+//    implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
+
+    // AWS 공식 SDK 사용
+    implementation platform('software.amazon.awssdk:bom:2.25.0')
+    implementation 'software.amazon.awssdk:cloudwatchlogs'
+
+    // Logback과의 통합을 위한 라이브러리
+    implementation 'io.github.dibog:cloudwatch-logback-appender:2.0.0'
 }
 
 dependencyManagement {

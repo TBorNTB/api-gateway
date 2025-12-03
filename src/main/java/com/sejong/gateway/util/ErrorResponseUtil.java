@@ -41,6 +41,12 @@ public class ErrorResponseUtil {
         return writeErrorResponse(exchange, HttpStatus.BAD_REQUEST, "BAD_REQUEST", message);
     }
 
+    /**
+    *  Rate-Limiter 너무많은 요청일 경우 해당 트래픽 제한 에러*/
+    public Mono<Void> writeTooManyRequestResponse(ServerWebExchange exchange, String message) {
+        return writeErrorResponse(exchange, HttpStatus.TOO_MANY_REQUESTS, "TOO_MANY_REQUESTS", message);
+    }
+
     private Mono<Void> writeErrorResponse(ServerWebExchange exchange,
                                          HttpStatus status,
                                          String errorCode,

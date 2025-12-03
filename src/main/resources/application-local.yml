@@ -15,6 +15,12 @@ spring:
   application:
     name: api-gateway
 
+  data:
+    redis:
+      host: ${EC2_HOST_INFRA_PRIVATE}
+      port: 6379
+      timeout: 2s
+
   cloud:
     discovery:
       enabled: true
@@ -24,14 +30,28 @@ spring:
         enabled: false
 
     gateway:
+      config:
+        ratelimit:
+          replenish: ${RATE_LIMIT_REPLENISH:5}
+          burst: ${RATE_LIMIT_BURST:10}
+          tokens: ${RATE_LIMIT_TOKENS:1}
+      _shared:
+        filters:
+          rl_common: &rl_common
+            name: RequestRateLimiter
+            args:
+              key-resolver: '#{@ipKeyResolver}'
+              redis-rate-limiter.replenishRate: ${spring.cloud.gateway.config.ratelimit.replenish}
+              redis-rate-limiter.burstCapacity: ${spring.cloud.gateway.config.ratelimit.burst}
+              redis-rate-limiter.requestedTokens: ${spring.cloud.gateway.config.ratelimit.tokens}
       server:
         webflux:
           routes:
-            # === USER SERVICE1 ===
+            # === USER SERVICE ===
             - id: user-service-swagger
               uri: lb://USER-SERVICE
               predicates:
-                - Path=/user-service/v3/api-docs, /user-service/api/login
+                - Path=/user-service/v3/api-docs
               filters:
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
 
@@ -39,10 +59,11 @@ spring:
             - id: user-service-oauth2
               uri: lb://USER-SERVICE
               predicates:
-                - Path=/user-service/oauth2/authorization/github, /user-service/login/oauth2/code/github, /user-service/users, /user-service/alarm/**, /user-service/users/page
+                - Path=/user-service/oauth2/authorization/github, /user-service/login/oauth2/code/github, /user-service/users, /user-service/users/role, /user-service/users/role/all,, /user-service/alarm/**, /user-service/users/page
                 - Method=GET
               filters:
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
+                - *rl_common
 
             # 인증 불필요 경로 (POST 메소드)
             - id: user-service-unauthenticated
@@ -52,6 +73,7 @@ spring:
                 - Method=POST
               filters:
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
+                - *rl_common
 
             # 인증 필요 경로
             - id: user-service-authenticated
@@ -61,10 +83,9 @@ spring:
               filters:
                 - name: JwtAuthenticationFilter
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
+                - *rl_common
 
             # === PROJECT SERVICE ===
-
-            # Swagger 문서 경로 (인증 불필요)
             - id: project-service-swagger
               uri: lb://PROJECT-SERVICE
               predicates:
@@ -72,51 +93,50 @@ spring:
               filters:
                 - RewritePath=/project-service/(?<segment>.*), /${segment}
 
-            # 인증 필요 경로
             - id: project-service-authenticated
               uri: lb://PROJECT-SERVICE
               predicates:
                 - Path=/project-service/**
               filters:
                 - RewritePath=/project-service/(?<segment>.*), /${segment}
+                - *rl_common
 
             # === NEWSLETTER SERVICE ===
-
-            # 인증 불필요
             - id: newsletter-service-unauthenticated
               uri: lb://NEWSLETTER-SERVICE
               predicates:
                 - Path=/newsletter-service/**
               filters:
                 - RewritePath=/newsletter-service/(?<segment>.*), /${segment}
+                - *rl_common
 
-                # === META SERVICE ===
+            # === CHAT SERVICE ===
             - id: meta-service-unauthenticated
               uri: lb://META-SERVICE
               predicates:
                 - Path=/meta-service/**
               filters:
                 - RewritePath=/meta-service/(?<segment>.*), /${segment}
+                - *rl_common
 
             # === ARCHIVE SERVICE ===
-            # Swagger 문서 경로 (인증 불필요)
             - id: archive-service-swagger
               uri: lb://ARCHIVE-SERVICE
               predicates:
                 - Path=/archive-service/v3/api-docs
               filters:
                 - RewritePath=/archive-service/(?<segment>.*), /${segment}
+                - *rl_common
 
-            # 인증 불필요 경로 (조회 관련)
             - id: archive-service-unauthenticated
               uri: lb://ARCHIVE-SERVICE
               predicates:
-                - Path=/archive-service/news/health, /archive-service/news/offset, /archive-service/news/cursor, /archive-service/news/{newsId}, /archive-service/cs-knowledge/offset, /archive-service/cs-knowledge/cursor,/archive-service/cs-knowledge/{csKnowledgeId},/archive-service/cs-knowledge/{csKnowledgeId}/exists, /archive-service/cs-knowledge/category/**,/archive-service/cs-knowledge/unsent
+                - Path=/archive-service/news/health, /archive-service/news/offset, /archive-service/news/cursor, /archive-service/news/{newsId}, /archive-service/cs-knowledge/offset, /archive-service/cs-knowledge/cursor, /archive-service/cs-knowledge/{csKnowledgeId}, /archive-service/cs-knowledge/{csKnowledgeId}/exists, /archive-service/cs-knowledge/category_**, /archive-service/cs-knowledge/unsent
                 - Method=GET
               filters:
                 - RewritePath=/archive-service/(?<segment>.*), /${segment}
+                - *rl_common
 
-            # 인증 필요 경로 (생성, 수정, 삭제)
             - id: archive-service-authenticated
               uri: lb://ARCHIVE-SERVICE
               predicates:
@@ -124,6 +144,7 @@ spring:
               filters:
                 - name: JwtAuthenticationFilter
                 - RewritePath=/archive-service/(?<segment>.*), /${segment}
+                - *rl_common
 
             # === ELASTIC SERVICE ===
             - id: elastic-service-unauthenticated
@@ -132,8 +153,7 @@ spring:
                 - Path=/elastic-service/**
               filters:
                 - RewritePath=/elastic-service/(?<segment>.*), /${segment}
-
-
+                - *rl_common
 
 jwt:
   secret: ${JWT_SECRET}
@@ -145,19 +165,14 @@ springdoc:
     persist-authorization: true
     urls:
       - name: newsletter-service
-        url: http://localhost:8000/newsletter-service/v3/api-docs
-
+        url: http://${EC2_HOST_APP}:8000/newsletter-service/v3/api-docs
       - name: project-service
-        url: http://localhost:8000/project-service/v3/api-docs
-
+        url: http://${EC2_HOST_APP}:8000/project-service/v3/api-docs
       - name: archive-service
-        url: http://localhost:8000/archive-service/v3/api-docs
-
+        url: http://${EC2_HOST_APP}:8000/archive-service/v3/api-docs
       - name: user-service
-        url: http://localhost:8000/user-service/v3/api-docs
-
+        url: http://${EC2_HOST_APP}:8000/user-service/v3/api-docs
       - name: meta-service
-        url: http://localhost:8000/meta-service/v3/api-docs
-
+        url: http://${EC2_HOST_APP}:8000/meta-service/v3/api-docs
       - name: elastic-service
-        url: http://localhost:8000/elastic-service/v3/api-docs
+        url: http://${EC2_HOST_APP}:8000/elastic-service/v3/api-docs

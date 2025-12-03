@@ -13,6 +13,13 @@ eureka:
 spring:
   application:
     name: api-gateway
+  
+  data:
+    redis:
+      host: ${EC2_HOST_INFRA_PRIVATE}
+      port: 6379
+      timeout: 2s
+  
   cloud:
     discovery:
       enabled: true
@@ -21,6 +28,20 @@ spring:
         enabled: false
 
     gateway:
+      config:
+        ratelimit:
+          replenish: ${RATE_LIMIT_REPLENISH:5}
+          burst: ${RATE_LIMIT_BURST:10}
+          tokens: ${RATE_LIMIT_TOKENS:1}
+      _shared:
+        filters:
+          rl_common: &rl_common
+            name: RequestRateLimiter
+            args:
+              key-resolver: '#{@ipKeyResolver}'
+              redis-rate-limiter.replenishRate: ${spring.cloud.gateway.config.ratelimit.replenish}
+              redis-rate-limiter.burstCapacity: ${spring.cloud.gateway.config.ratelimit.burst}
+              redis-rate-limiter.requestedTokens: ${spring.cloud.gateway.config.ratelimit.tokens}
       server:
         webflux:
           routes:
@@ -40,6 +61,7 @@ spring:
                 - Method=GET
               filters:
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
+                - *rl_common
 
             # 인증 불필요 경로 (POST 메소드)
             - id: user-service-unauthenticated
@@ -49,6 +71,7 @@ spring:
                 - Method=POST
               filters:
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
+                - *rl_common
 
             # 인증 필요 경로
             - id: user-service-authenticated
@@ -58,6 +81,7 @@ spring:
               filters:
                 - name: JwtAuthenticationFilter
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
+                - *rl_common
 
             # === PROJECT SERVICE ===
             - id: project-service-swagger
@@ -73,6 +97,7 @@ spring:
                 - Path=/project-service/**
               filters:
                 - RewritePath=/project-service/(?<segment>.*), /${segment}
+                - *rl_common
 
             # === NEWSLETTER SERVICE ===
             - id: newsletter-service-unauthenticated
@@ -81,6 +106,7 @@ spring:
                 - Path=/newsletter-service/**
               filters:
                 - RewritePath=/newsletter-service/(?<segment>.*), /${segment}
+                - *rl_common
 
             # === CHAT SERVICE ===
             - id: meta-service-unauthenticated
@@ -89,6 +115,7 @@ spring:
                 - Path=/meta-service/**
               filters:
                 - RewritePath=/meta-service/(?<segment>.*), /${segment}
+                - *rl_common
 
             # === ARCHIVE SERVICE ===
             - id: archive-service-swagger
@@ -97,6 +124,7 @@ spring:
                 - Path=/archive-service/v3/api-docs
               filters:
                 - RewritePath=/archive-service/(?<segment>.*), /${segment}
+                - *rl_common
 
             - id: archive-service-unauthenticated
               uri: lb://ARCHIVE-SERVICE
@@ -105,6 +133,7 @@ spring:
                 - Method=GET
               filters:
                 - RewritePath=/archive-service/(?<segment>.*), /${segment}
+                - *rl_common
 
             - id: archive-service-authenticated
               uri: lb://ARCHIVE-SERVICE
@@ -113,6 +142,7 @@ spring:
               filters:
                 - name: JwtAuthenticationFilter
                 - RewritePath=/archive-service/(?<segment>.*), /${segment}
+                - *rl_common
 
             # === ELASTIC SERVICE ===
             - id: elastic-service-unauthenticated
@@ -121,6 +151,8 @@ spring:
                 - Path=/elastic-service/**
               filters:
                 - RewritePath=/elastic-service/(?<segment>.*), /${segment}
+                - *rl_common
+
 
 jwt:
   secret: ${JWT_SECRET}
@@ -143,3 +175,4 @@ springdoc:
         url: https://api.sejongssg.kr/meta-service/v3/api-docs
       - name: elastic-service
         url: https://api.sejongssg.kr/elastic-service/v3/api-docs
+

@@ -17,7 +17,7 @@ public class CorsConfig {
         config.setAllowCredentials(true); // Credential 허용
         config.addAllowedOriginPattern("*"); // 모든 Origin 허용
         config.addAllowedHeader("*"); // 모든 헤더 허용
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 메소드 허용
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH")); // 메소드 허용
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

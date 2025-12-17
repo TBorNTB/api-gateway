@@ -73,6 +73,26 @@ spring:
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
                 - *rl_common
 
+                # view/like/comment/meta 인증 불필요 경로 (GET 메소드)
+            - id: user-service-meta-get
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/api/health, /user-service/api/meta/**, /user-service/api/view/*/count, /user-service/api/like/*/count, /user-service/api/comment/*, /user-service/api/comment/*/replies
+                - Method=GET
+              filters:
+                - RewritePath=/user-service/(?<segment>.*), /${segment}
+                - *rl_common
+
+            # view 조회수 증가 인증 불필요 (POST - IP 기반)
+            - id: user-service-view-post
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/api/view/*
+                - Method=POST
+              filters:
+                - RewritePath=/user-service/(?<segment>.*), /${segment}
+                - *rl_common
+
             # 인증 필요 경로
             - id: user-service-authenticated
               uri: lb://USER-SERVICE
@@ -106,15 +126,6 @@ spring:
                 - Path=/newsletter-service/**
               filters:
                 - RewritePath=/newsletter-service/(?<segment>.*), /${segment}
-                - *rl_common
-
-            # === META SERVICE ===
-            - id: meta-service-unauthenticated
-              uri: lb://META-SERVICE
-              predicates:
-                - Path=/meta-service/**
-              filters:
-                - RewritePath=/meta-service/(?<segment>.*), /${segment}
                 - *rl_common
 
             # === ARCHIVE SERVICE ===

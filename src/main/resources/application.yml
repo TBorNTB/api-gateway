@@ -182,8 +182,6 @@ springdoc:
         url: https://api.sejongssg.kr/archive-service/v3/api-docs
       - name: user-service
         url: https://api.sejongssg.kr/user-service/v3/api-docs
-      - name: meta-service
-        url: https://api.sejongssg.kr/meta-service/v3/api-docs
       - name: elastic-service
         url: https://api.sejongssg.kr/elastic-service/v3/api-docs
 

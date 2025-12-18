@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
             // Authorization 헤더에서 Bearer 토큰 추출
             String authHeader = request.getHeaders().getFirst("Authorization");
-            
+
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 if (config.isLogEnabled()) {
                     log.warn("Authorization Bearer 토큰이 없음 - Path: {}", path);
@@ -40,7 +40,6 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             }
 
             String token = authHeader.substring(7); // "Bearer " 제거
-
             try {
                 // JWT 토큰 검증
                 if (!jwtUtil.validateToken(token)) {

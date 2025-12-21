@@ -94,7 +94,7 @@ spring:
             - id: project-service-unauthenticated
               uri: lb://PROJECT-SERVICE
               predicates:
-                - Path=/project-service/api/project/health,/project-service/api/project/search-page, /project-service/api/project/{projectId}
+                - Path=/project-service/api/project/health,/project-service/api/project/search-page, /project-service/api/project/{projectId}, /project-service/api/tech-stack/{techStackId}, /project-service/api/subgoal/{projectId}, /project-service/api/document/{documentId}, /project-service/api/category
                 - Method=GET
               filters:
                 - RewritePath=/project-service/(?<segment>.*), /${segment}

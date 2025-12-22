@@ -59,7 +59,7 @@ spring:
             - id: user-service-oauth2
               uri: lb://USER-SERVICE
               predicates:
-                - Path=/user-service/oauth2/authorization/github, /user-service/login/oauth2/code/github, /user-service/users, /user-service/users/role, /user-service/users/role/all,, /user-service/alarm/**, /user-service/users/page
+                - Path=/user-service/oauth2/authorization/github, /user-service/login/oauth2/code/github, /user-service/users, /user-service/users/role, /user-service/users/role/all, /user-service/alarm/**, /user-service/users/page
                 - Method=GET
               filters:
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
@@ -70,6 +70,26 @@ spring:
               uri: lb://USER-SERVICE
               predicates:
                 - Path=/user-service/users, /user-service/users/login, /user-service/token/reissue, /api/s3/presigned-url, /user-service/users/auth/verification-code, /user-service/users/auth/reset-password
+                - Method=POST
+              filters:
+                - RewritePath=/user-service/(?<segment>.*), /${segment}
+                - *rl_common
+
+            # view/like/comment/meta 인증 불필요 경로 (GET 메소드)
+            - id: user-service-meta-get
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/api/health, /user-service/api/meta/**, /user-service/api/view/*/count, /user-service/api/like/*/count, /user-service/api/comment/*, /user-service/api/comment/*/replies
+                - Method=GET
+              filters:
+                - RewritePath=/user-service/(?<segment>.*), /${segment}
+                - *rl_common
+
+            # view 조회수 증가 인증 불필요 (POST - IP 기반)
+            - id: user-service-view-post
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/api/view/*
                 - Method=POST
               filters:
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
@@ -108,15 +128,6 @@ spring:
                 - Path=/newsletter-service/**
               filters:
                 - RewritePath=/newsletter-service/(?<segment>.*), /${segment}
-                - *rl_common
-
-            # === META SERVICE ===
-            - id: meta-service-unauthenticated
-              uri: lb://META-SERVICE
-              predicates:
-                - Path=/meta-service/**
-              filters:
-                - RewritePath=/meta-service/(?<segment>.*), /${segment}
                 - *rl_common
 
             # === ARCHIVE SERVICE ===
@@ -172,7 +183,5 @@ springdoc:
         url: http://${EC2_HOST_APP}:8000/archive-service/v3/api-docs
       - name: user-service
         url: http://${EC2_HOST_APP}:8000/user-service/v3/api-docs
-      - name: meta-service
-        url: http://${EC2_HOST_APP}:8000/meta-service/v3/api-docs
       - name: elastic-service
         url: http://${EC2_HOST_APP}:8000/elastic-service/v3/api-docs

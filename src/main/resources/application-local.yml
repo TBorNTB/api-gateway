@@ -113,11 +113,43 @@ spring:
               filters:
                 - RewritePath=/project-service/(?<segment>.*), /${segment}
 
+            - id: project-service-unauthenticated
+              uri: lb://PROJECT-SERVICE
+              predicates:
+                - Path=/project-service/api/project/health,/project-service/api/project/search-page, /project-service/api/project/{projectId}, /project-service/api/tech-stack/{techStackId}, /project-service/api/subgoal/{projectId}, /project-service/api/document/{documentId}, /project-service/api/category
+                - Method=GET
+              filters:
+                - RewritePath=/project-service/(?<segment>.*), /${segment}
+                - *rl_common
+
+            # === NEWS ===
+            # 2) Public (최소) - health + 조회 GET들만
+            - id: news-public
+              uri: lb://PROJECT-SERVICE
+              predicates:
+                - Path=/project-service/news/health,/project-service/news/offset, /project-service/news/cursor, /project-service/news/{newsId}
+                - Method=GET
+              filters:
+                - RewritePath=/project-service/(?<segment>.*), /${segment}
+                - *rl_common
+
+            # 1) Public read only (Controller 기준 GET들은 bearerAuth 없음)
+            - id: cs-knowledge-public-read
+              uri: lb://PROJECT-SERVICE
+              predicates:
+                - Path=/project-service/cs-knowledge/**
+                - Method=GET
+              filters:
+                - RewritePath=/project-service/(?<segment>.*), /${segment}
+                - *rl_common
+
+            # Project 인증 필요 경로
             - id: project-service-authenticated
               uri: lb://PROJECT-SERVICE
               predicates:
                 - Path=/project-service/**
               filters:
+                - name: JwtAuthenticationFilter
                 - RewritePath=/project-service/(?<segment>.*), /${segment}
                 - *rl_common
 
@@ -130,31 +162,13 @@ spring:
                 - RewritePath=/newsletter-service/(?<segment>.*), /${segment}
                 - *rl_common
 
-            # === ARCHIVE SERVICE ===
-            - id: archive-service-swagger
-              uri: lb://ARCHIVE-SERVICE
+            # === META SERVICE ===
+            - id: meta-service-unauthenticated
+              uri: lb://META-SERVICE
               predicates:
-                - Path=/archive-service/v3/api-docs
+                - Path=/meta-service/**
               filters:
-                - RewritePath=/archive-service/(?<segment>.*), /${segment}
-                - *rl_common
-
-            - id: archive-service-unauthenticated
-              uri: lb://ARCHIVE-SERVICE
-              predicates:
-                - Path=/archive-service/news/health, /archive-service/news/offset, /archive-service/news/cursor, /archive-service/news/{newsId}, /archive-service/cs-knowledge/offset, /archive-service/cs-knowledge/cursor, /archive-service/cs-knowledge/{csKnowledgeId}, /archive-service/cs-knowledge/{csKnowledgeId}/exists, /archive-service/cs-knowledge/category_**, /archive-service/cs-knowledge/unsent
-                - Method=GET
-              filters:
-                - RewritePath=/archive-service/(?<segment>.*), /${segment}
-                - *rl_common
-
-            - id: archive-service-authenticated
-              uri: lb://ARCHIVE-SERVICE
-              predicates:
-                - Path=/archive-service/**
-              filters:
-                - name: JwtAuthenticationFilter
-                - RewritePath=/archive-service/(?<segment>.*), /${segment}
+                - RewritePath=/meta-service/(?<segment>.*), /${segment}
                 - *rl_common
 
             # === ELASTIC SERVICE ===

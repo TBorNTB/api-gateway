@@ -16,7 +16,7 @@ spring:
   
   data:
     redis:
-      host: ${EC2_HOST_INFRA_PRIVATE}
+      host: ${DB_HOST}
       port: 6379
       timeout: 2s
   

@@ -152,6 +152,13 @@ spring:
                 - *rl_common
 
             # === NEWSLETTER SERVICE ===
+            - id: newsletter-service-swagger
+              uri: lb://NEWSLETTER-SERVICE
+              predicates:
+                - Path=/newsletter-service/v3/api-docs
+              filters:
+                - RewritePath=/newsletter-service/(?<segment>.*), /${segment}
+
             - id: newsletter-service-unauthenticated
               uri: lb://NEWSLETTER-SERVICE
               predicates:
@@ -161,6 +168,13 @@ spring:
                 - *rl_common
 
             # === ELASTIC SERVICE ===
+            - id: elastic-service-swagger
+              uri: lb://ELASTIC-SERVICE
+              predicates:
+                - Path=/elastic-service/v3/api-docs
+              filters:
+                - RewritePath=/elastic-service/(?<segment>.*), /${segment}
+
             - id: elastic-service-unauthenticated
               uri: lb://ELASTIC-SERVICE
               predicates:

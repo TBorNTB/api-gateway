@@ -194,11 +194,11 @@ springdoc:
     persist-authorization: true
     urls:
       - name: newsletter-service
-        url: https://10.2.0.39/newsletter-service/v3/api-docs
+        url: https://api.sejongssg.kr/newsletter-service/v3/api-docs
       - name: project-service
-        url: https://10.2.0.39/project-service/v3/api-docs
+        url: https://api.sejongssg.kr/project-service/v3/api-docs
       - name: user-service
-        url: https://10.2.0.39/user-service/v3/api-docs
+        url: https://api.sejongssg.kr/user-service/v3/api-docs
       - name: elastic-service
-        url: https://10.2.0.39/elastic-service/v3/api-docs
+        url: https://api.sejongssg.kr/elastic-service/v3/api-docs
 

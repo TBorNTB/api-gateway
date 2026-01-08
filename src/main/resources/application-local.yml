@@ -202,7 +202,7 @@ springdoc:
 
 management:
   server:
-    port: 18081
+    port: 18080
   endpoints:
     web:
       exposure:

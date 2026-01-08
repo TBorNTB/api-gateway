@@ -202,3 +202,13 @@ springdoc:
       - name: elastic-service
         url: https://api.sejongssg.kr/elastic-service/v3/api-docs
 
+management:
+  server:
+    port: 18081  
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: always

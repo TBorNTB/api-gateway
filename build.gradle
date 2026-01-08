@@ -63,6 +63,14 @@ dependencies {
 
     // Logback과의 통합을 위한 라이브러리
     implementation 'io.github.dibog:cloudwatch-logback-appender:2.0.0'
+
+    runtimeOnly("org.springframework.boot:spring-boot-properties-migrator")
+    // ← 이건 오히려 런타임 포함이라 비추
+
+    //Actuator - metric 수집
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    //prometheus를 이용한 데이터 통계
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 
 dependencyManagement {

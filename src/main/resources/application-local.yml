@@ -79,7 +79,7 @@ spring:
             - id: user-service-meta-get
               uri: lb://USER-SERVICE
               predicates:
-                - Path=/user-service/api/health, /user-service/api/meta/**, /user-service/api/view/*/count, /user-service/api/like/*/count, /user-service/api/comment/*, /user-service/api/comment/*/replies
+                - Path=/user-service/api/health, /user-service/api/meta/**, /user-service/api/view/*/count, /user-service/api/like/*/count, /user-service/api/comment/*, /user-service/api/comment/*/replies ,/user-service/view/count/**
                 - Method=GET
               filters:
                 - RewritePath=/user-service/(?<segment>.*), /${segment}

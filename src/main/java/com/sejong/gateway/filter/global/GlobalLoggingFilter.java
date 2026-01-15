@@ -22,7 +22,7 @@ public class GlobalLoggingFilter implements GlobalFilter, Ordered {
         long startTime = System.currentTimeMillis();
         String path = request.getURI().getPath();
         String method = request.getMethod().name();
-
+        log.info("CookieHeader={}", exchange.getRequest().getHeaders().getFirst("Cookie"));
         log.info(">>>> Request PRE-Filter: [{}] {} - ID: {}", method, path, request.getId());
 
         return chain.filter(exchange).then(Mono.fromRunnable(() -> {

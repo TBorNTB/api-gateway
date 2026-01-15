@@ -47,6 +47,14 @@ spring:
       server:
         webflux:
           routes:
+            # === USER SERVICE (WEBSOCKET) ===
+            - id: user-service-ws
+              uri: lb:ws://USER-SERVICE
+              predicates:
+                - Path=/user-service/ws/**
+              filters:
+                # (선택) 인증을 ws에도 걸 거면 JwtAuthenticationFilter를 여기에도 둬야 함
+                - RewritePath=/user-service/(?<segment>.*), /${segment}
             # === USER SERVICE ===
             - id: user-service-swagger
               uri: lb://USER-SERVICE

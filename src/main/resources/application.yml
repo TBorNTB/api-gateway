@@ -52,7 +52,6 @@ spring:
                 - Path=/user-service/ws/**
               filters:
                 # (선택) 인증을 ws에도 걸 거면 JwtAuthenticationFilter를 여기에도 둬야 함
-                - name: JwtAuthenticationFilter
                 - RewritePath=/user-service/(?<segment>.*), /${segment}
             # === USER SERVICE ===
             - id: user-service-swagger

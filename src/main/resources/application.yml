@@ -149,6 +149,16 @@ spring:
                 - RewritePath=/project-service/(?<segment>.*), /${segment}
                 - *rl_common
 
+            # 2) Public read only (Controller 기준 GET들은 bearerAuth 없음)
+            - id: question-public-read
+              uri: lb://PROJECT-SERVICE
+              predicates:
+                - Path=/project-service/api/question/**
+                - Method=GET
+              filters:
+                - RewritePath=/project-service/(?<segment>.*), /${segment}
+                - *rl_common
+
             # Project 인증 필요 경로
             - id: project-service-authenticated
               uri: lb://PROJECT-SERVICE
